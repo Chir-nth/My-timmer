@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="apple-touch-icon" href="icon.png" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Time Tracker">
 <meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon.png" />
 <title>Time Tracker</title>
 <style>
   :root {
@@ -214,15 +214,14 @@
   .confirm-yes { color:var(--stop) !important; border-color:var(--stop) !important; font-weight:700; }
   .confirm-no { color:var(--muted); }
 
-  .rec-row { display:flex; gap:8px; flex-wrap:wrap; }
-
+  .rec-row { display:flex; gap:6px; flex-wrap:wrap; }
   .rec-tag {
     display:inline-flex; flex-direction:column; align-items:center;
-    padding:6px 12px; border-radius:10px; min-width:60px;
+    padding:5px 8px; border-radius:8px; min-width:0; flex:1;
   }
 
-  .rec-tag .rt-lbl { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; opacity:0.65; margin-bottom:2px; }
-  .rec-tag .rt-val { font-family:var(--mono); font-size:13px; font-weight:700; }
+  .rec-tag .rt-lbl { font-size:8px; letter-spacing:1px; text-transform:uppercase; opacity:0.65; margin-bottom:2px; white-space:nowrap; }
+  .rec-tag .rt-val { font-family:var(--mono); font-size:12px; font-weight:700; white-space:nowrap; }
 
   .rec-tag.green { background:var(--go-light); color:var(--go); }
   .rec-tag.orange { background:var(--brk-active-light); color:var(--brk-active); }
@@ -404,10 +403,11 @@
 
   <div class="calc-preview" id="calcPreview">
     <div class="calc-title">Preview</div>
-    <div class="calc-row"><span class="calc-lbl">Login</span><span class="calc-val green" id="pvStart">—</span></div>
-    <div class="calc-row"><span class="calc-lbl">Logout</span><span class="calc-val" id="pvFinish">—</span></div>
+    <div class="calc-row"><span class="calc-lbl">Start</span><span class="calc-val green" id="pvStart">—</span></div>
     <div class="calc-row"><span class="calc-lbl">Break</span><span class="calc-val" id="pvBreak">—</span></div>
-    <div class="calc-row"><span class="calc-lbl">Working Hours</span><span class="calc-val blue" id="pvWorking">—</span></div>
+    <div class="calc-row"><span class="calc-lbl">Finish</span><span class="calc-val" id="pvFinish">—</span></div>
+    <div class="calc-row"><span class="calc-lbl">Working Hrs</span><span class="calc-val blue" id="pvWorking">—</span></div>
+    <div class="calc-row"><span class="calc-lbl">Total Hrs</span><span class="calc-val" id="pvTotal">—</span></div>
     <div class="calc-row"><span class="calc-lbl">Decimal</span><span class="calc-val blue" id="pvDecimal">—</span></div>
   </div>
 
@@ -533,7 +533,8 @@
       finish: fmt(now),
       working: msHHMM(w),
       decimal: msDecimal(w),
-      workingMs: w
+      workingMs: w,
+      totalMs: w + state.totalBreakMs
     });
     saveEntries();
     toast('Shift saved ✓');
@@ -626,7 +627,9 @@
           <div class="rec-tag green"><span class="rt-lbl">Start</span><span class="rt-val">${entry.start}</span></div>
           <div class="rec-tag orange"><span class="rt-lbl">Break</span><span class="rt-val">${entry.brk}</span></div>
           <div class="rec-tag plain"><span class="rt-lbl">Finish</span><span class="rt-val">${entry.finish}</span></div>
-          <div class="rec-tag blue"><span class="rt-lbl">Worked</span><span class="rt-val">${entry.decimal}h</span></div>
+          <div class="rec-tag blue"><span class="rt-lbl">Working Hrs</span><span class="rt-val">${entry.working}</span></div>
+          <div class="rec-tag plain"><span class="rt-lbl">Total Hrs</span><span class="rt-val">${msHHMM(entry.totalMs || (entry.workingMs + (entry.brkMs||0)))}</span></div>
+          <div class="rec-tag blue"><span class="rt-lbl">Decimal</span><span class="rt-val">${entry.decimal}</span></div>
         </div>
         <div class="confirm-row" id="confirm-${realIdx}" style="display:none; margin-top:10px; display:none; gap:8px;">
           <span style="font-size:13px;color:var(--muted);flex:1;align-self:center;">Remove this entry?</span>
@@ -692,8 +695,13 @@
   // ── EXPORT ──
   function exportCSV() {
     if (!entries.length) { toast('No records to export'); return; }
-    const rows = [['Date','Day','Login','Break','Logout','Working Hrs','Decimal'],
-      ...entries.map(e => [e.date,e.day,e.start,e.brk,e.finish,e.working,e.decimal])
+    const rows = [['Date','Day','Start','Break','Finish','Working Hrs','Total Hrs','Decimal'],
+      ...entries.map(e => [
+        e.date, e.day, e.start, e.brk, e.finish,
+        e.working,
+        msHHMM(e.totalMs || (e.workingMs + (e.brkMs||0))),
+        e.decimal
+      ])
     ].map(r => r.join(',')).join('\n');
     const blob = new Blob([rows], {type:'text/csv'});
     const url = URL.createObjectURL(blob);
@@ -732,10 +740,11 @@
       return;
     }
 
-    document.getElementById('pvStart').textContent = fmt12(startVal);
-    document.getElementById('pvFinish').textContent = fmt12(finishVal);
+    document.getElementById('pvStart').textContent = startVal;
     document.getElementById('pvBreak').textContent = breakMins + ' min' + (breakMins !== 1 ? 's' : '');
+    document.getElementById('pvFinish').textContent = finishVal;
     document.getElementById('pvWorking').textContent = msHHMM(workingMs);
+    document.getElementById('pvTotal').textContent = msHHMM(workingMs + breakMs);
     document.getElementById('pvDecimal').textContent = msDecimal(workingMs);
     preview.classList.add('visible');
     saveBtn.disabled = false;
@@ -756,13 +765,14 @@
     entries.unshift({
       date: dateVal,
       day: DAYS[d.getDay()],
-      start: fmt12(startVal),
+      start: startVal,
       brk: msHHMM(breakMs),
       brkMs: breakMs,
-      finish: fmt12(finishVal),
+      finish: finishVal,
       working: msHHMM(workingMs),
       decimal: msDecimal(workingMs),
-      workingMs: workingMs
+      workingMs: workingMs,
+      totalMs: workingMs + breakMs
     });
     saveEntries();
 
@@ -782,12 +792,6 @@
     return (h * 60 + m) * 60000;
   }
 
-  function fmt12(t) {
-    const [h, m] = t.split(':').map(Number);
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    const h12 = h % 12 || 12;
-    return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
-  }
   function toast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg; t.classList.add('show');
