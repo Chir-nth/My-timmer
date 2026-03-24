@@ -406,7 +406,7 @@
     <div class="calc-row"><span class="calc-lbl">Start</span><span class="calc-val green" id="pvStart">—</span></div>
     <div class="calc-row"><span class="calc-lbl">Break</span><span class="calc-val" id="pvBreak">—</span></div>
     <div class="calc-row"><span class="calc-lbl">Finish</span><span class="calc-val" id="pvFinish">—</span></div>
-    <div class="calc-row"><span class="calc-lbl">Working Hrs</span><span class="calc-val blue" id="pvWorking">—</span></div>
+    <div class="calc-row"><span class="calc-lbl">Hours</span><span class="calc-val blue" id="pvWorking">—</span></div>
     <div class="calc-row"><span class="calc-lbl">Total Hrs</span><span class="calc-val" id="pvTotal">—</span></div>
     <div class="calc-row"><span class="calc-lbl">Decimal</span><span class="calc-val blue" id="pvDecimal">—</span></div>
   </div>
@@ -627,7 +627,7 @@
           <div class="rec-tag green"><span class="rt-lbl">Start</span><span class="rt-val">${entry.start}</span></div>
           <div class="rec-tag orange"><span class="rt-lbl">Break</span><span class="rt-val">${entry.brk}</span></div>
           <div class="rec-tag plain"><span class="rt-lbl">Finish</span><span class="rt-val">${entry.finish}</span></div>
-          <div class="rec-tag blue"><span class="rt-lbl">Working Hrs</span><span class="rt-val">${entry.working}</span></div>
+          <div class="rec-tag blue"><span class="rt-lbl">Hours</span><span class="rt-val">${entry.working}</span></div>
           <div class="rec-tag plain"><span class="rt-lbl">Total Hrs</span><span class="rt-val">${msHHMM(entry.totalMs || (entry.workingMs + (entry.brkMs||0)))}</span></div>
           <div class="rec-tag blue"><span class="rt-lbl">Decimal</span><span class="rt-val">${entry.decimal}</span></div>
         </div>
@@ -695,7 +695,7 @@
   // ── EXPORT ──
   function exportCSV() {
     if (!entries.length) { toast('No records to export'); return; }
-    const rows = [['Date','Day','Start','Break','Finish','Working Hrs','Total Hrs','Decimal'],
+    const rows = [['Date','Day','Start','Break','Finish','Hours','Total Hrs','Decimal'],
       ...entries.map(e => [
         e.date, e.day, e.start, e.brk, e.finish,
         e.working,
