@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="apple-touch-icon" href="icon.png" />
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -211,6 +209,9 @@
   .rec-day { font-size:12px; color:var(--muted); }
   .rec-del { background:none; border:1px solid var(--border); color:var(--muted); border-radius:8px; padding:5px 10px; font-size:13px; cursor:pointer; }
   .rec-del:active { border-color:var(--stop); color:var(--stop); }
+  .confirm-row { display:none; flex-direction:row; align-items:center; gap:8px; margin-top:10px; }
+  .confirm-yes { color:var(--stop) !important; border-color:var(--stop) !important; font-weight:700; }
+  .confirm-no { color:var(--muted); }
 
   .rec-row { display:flex; gap:8px; flex-wrap:wrap; }
 
@@ -249,25 +250,6 @@
 
   .btn-clear:active { border-color:var(--stop); color:var(--stop); }
 
-  /* ── SETUP BANNER ── */
-  .setup-banner {
-    background:linear-gradient(135deg,#1a3d8b,#1a6b3a);
-    border-radius:var(--r); padding:16px; margin-bottom:16px; color:#fff;
-  }
-
-  .setup-banner h3 { font-size:15px; font-weight:700; margin-bottom:6px; }
-  .setup-banner p { font-size:13px; opacity:0.8; line-height:1.5; margin-bottom:10px; }
-
-  .setup-steps { list-style:none; }
-  .setup-steps li { font-size:13px; opacity:0.85; padding:3px 0; display:flex; gap:8px; }
-  .setup-steps li::before { content:attr(data-n); opacity:0.6; font-family:var(--mono); font-weight:700; }
-
-  .setup-dismiss {
-    margin-top:12px; background:rgba(255,255,255,0.2); border:none; border-radius:8px;
-    color:#fff; font-family:var(--sans); font-size:13px; font-weight:600;
-    padding:8px 16px; cursor:pointer; width:100%;
-  }
-
   /* ── TOAST ── */
   .toast {
     position:fixed; bottom:calc(var(--safe-bot) + 72px); left:50%;
@@ -284,6 +266,42 @@
 
   .empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:14px; }
   .empty .e-icon { font-size:36px; margin-bottom:10px; }
+
+  /* ── MANUAL ENTRY ── */
+  .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+  .form-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); font-family:var(--mono); }
+  .form-input {
+    background:var(--surface2); border:1.5px solid var(--border); border-radius:10px;
+    color:var(--ink); font-family:var(--mono); font-size:16px;
+    padding:12px 14px; width:100%; outline:none;
+    -webkit-appearance:none; appearance:none;
+    transition:border-color 0.2s; color-scheme:light;
+  }
+  .form-input:focus { border-color:var(--go); }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .calc-preview {
+    background:var(--ink); border-radius:14px; padding:18px 16px;
+    margin-bottom:16px; display:none;
+  }
+  .calc-preview.visible { display:block; }
+  .calc-title { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.35); font-family:var(--mono); margin-bottom:12px; }
+  .calc-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.07); }
+  .calc-row:last-child { border-bottom:none; }
+  .calc-lbl { font-size:13px; color:rgba(255,255,255,0.45); }
+  .calc-val { font-family:var(--mono); font-weight:700; font-size:14px; color:#fff; }
+  .calc-val.green { color:#4fff9e; }
+  .calc-val.blue { color:#7ec8ff; }
+  .btn-save-manual {
+    width:100%; border:none; border-radius:var(--r);
+    background:var(--go); color:#fff;
+    font-family:var(--sans); font-size:16px; font-weight:700;
+    padding:16px; cursor:pointer;
+    box-shadow:0 4px 18px rgba(26,107,58,0.4);
+    transition:opacity 0.2s, transform 0.12s;
+    -webkit-user-select:none; user-select:none;
+  }
+  .btn-save-manual:active { transform:scale(0.97); opacity:0.88; }
+  .btn-save-manual:disabled { opacity:0.3; }
 </style>
 </head>
 <body>
@@ -293,17 +311,6 @@
   <div class="page-header">
     <h2>Time <span>Tracker</span></h2>
     <p id="headerDate">—</p>
-  </div>
-
-  <div id="setupBanner" class="setup-banner" style="display:none">
-    <h3>📱 Add to Home Screen</h3>
-    <p>Save this as an app so your data never gets cleared:</p>
-    <ul class="setup-steps">
-      <li data-n="1.">Tap the Share button (box with arrow) in Safari</li>
-      <li data-n="2.">Scroll down → tap "Add to Home Screen"</li>
-      <li data-n="3.">Tap "Add" — done! Open from your home screen</li>
-    </ul>
-    <button class="setup-dismiss" onclick="dismissBanner()">Got it ✓</button>
   </div>
 
   <div class="clock-card">
@@ -362,10 +369,57 @@
   <button class="btn-clear" onclick="clearAll()">🗑 Clear All Records</button>
 </div>
 
+<!-- ═══ TAB: ADD MANUAL ═══ -->
+<div class="page" id="page-add">
+  <div class="page-header">
+    <h2>Add <span>Entry</span></h2>
+    <p>Log a shift manually</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Shift Details</div>
+
+    <div class="form-group">
+      <div class="form-label">Date</div>
+      <input type="date" class="form-input" id="mDate" onchange="calcPreview()">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">Login Time</div>
+        <input type="time" class="form-input" id="mStart" oninput="calcPreview()">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Logout Time</div>
+        <input type="time" class="form-input" id="mFinish" oninput="calcPreview()">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-label">Break Duration (minutes)</div>
+      <input type="number" class="form-input" id="mBreak" min="0" max="600" value="0" placeholder="0" oninput="calcPreview()">
+    </div>
+  </div>
+
+  <div class="calc-preview" id="calcPreview">
+    <div class="calc-title">Preview</div>
+    <div class="calc-row"><span class="calc-lbl">Login</span><span class="calc-val green" id="pvStart">—</span></div>
+    <div class="calc-row"><span class="calc-lbl">Logout</span><span class="calc-val" id="pvFinish">—</span></div>
+    <div class="calc-row"><span class="calc-lbl">Break</span><span class="calc-val" id="pvBreak">—</span></div>
+    <div class="calc-row"><span class="calc-lbl">Working Hours</span><span class="calc-val blue" id="pvWorking">—</span></div>
+    <div class="calc-row"><span class="calc-lbl">Decimal</span><span class="calc-val blue" id="pvDecimal">—</span></div>
+  </div>
+
+  <button class="btn-save-manual" id="btnSaveManual" onclick="saveManual()" disabled>Save Entry</button>
+</div>
+
 <!-- ═══ TAB BAR ═══ -->
 <div class="tab-bar">
   <button class="tab active" id="tab-clock" onclick="switchTab('clock')">
     <span class="t-icon">⏱</span>Clock
+  </button>
+  <button class="tab" id="tab-add" onclick="switchTab('add')">
+    <span class="t-icon">＋</span>Add
   </button>
   <button class="tab" id="tab-records" onclick="switchTab('records')">
     <span class="t-icon">📋</span>Records
@@ -380,7 +434,6 @@
   const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const SK = 'att_state_v4';
   const EK = 'att_entries_v4';
-  const BK = 'att_banner_v4';
 
   // ── STATE ──
   let state = load(SK) || {
@@ -402,6 +455,14 @@
     document.getElementById('page-' + name).classList.add('active');
     document.getElementById('tab-' + name).classList.add('active');
     if (name === 'records') renderRecords();
+    if (name === 'add') {
+      // Pre-fill today's date if empty
+      const d = document.getElementById('mDate');
+      if (!d.value) {
+        const now = new Date();
+        d.value = now.toISOString().split('T')[0];
+      }
+    }
   }
 
   // ── CLOCK TICK ──
@@ -547,34 +608,84 @@
     document.getElementById('sumTotal').textContent = msHHMM(totalMs);
     document.getElementById('sumAvg').textContent = msHHMM(Math.round(totalMs/entries.length));
 
-    list.innerHTML = entries.map((e,i) => `
-      <div class="record-item">
+    list.innerHTML = entries.map((e,i) => {
+      // Display newest first but use actual index for deletion
+      const realIdx = entries.length - 1 - i;
+      const entry = entries[realIdx];
+      return `
+      <div class="record-item" id="rec-${realIdx}">
         <div class="rec-top">
           <div>
-            <div class="rec-date">${e.date}</div>
-            <div class="rec-day">${e.day}</div>
+            <div class="rec-date">${entry.date}</div>
+            <div class="rec-day">${entry.day}</div>
           </div>
-          <button class="rec-del" onclick="deleteEntry(${i})">Remove</button>
+          <button class="rec-del" id="del-${realIdx}" onclick="askDelete(${realIdx})">Remove</button>
         </div>
         <div class="rec-row">
-          <div class="rec-tag green"><span class="rt-lbl">Start</span><span class="rt-val">${e.start}</span></div>
-          <div class="rec-tag orange"><span class="rt-lbl">Break</span><span class="rt-val">${e.brk}</span></div>
-          <div class="rec-tag plain"><span class="rt-lbl">Finish</span><span class="rt-val">${e.finish}</span></div>
-          <div class="rec-tag blue"><span class="rt-lbl">Worked</span><span class="rt-val">${e.decimal}h</span></div>
+          <div class="rec-tag green"><span class="rt-lbl">Start</span><span class="rt-val">${entry.start}</span></div>
+          <div class="rec-tag orange"><span class="rt-lbl">Break</span><span class="rt-val">${entry.brk}</span></div>
+          <div class="rec-tag plain"><span class="rt-lbl">Finish</span><span class="rt-val">${entry.finish}</span></div>
+          <div class="rec-tag blue"><span class="rt-lbl">Worked</span><span class="rt-val">${entry.decimal}h</span></div>
         </div>
-      </div>
-    `).join('');
+        <div class="confirm-row" id="confirm-${realIdx}" style="display:none; margin-top:10px; display:none; gap:8px;">
+          <span style="font-size:13px;color:var(--muted);flex:1;align-self:center;">Remove this entry?</span>
+          <button class="rec-del confirm-yes" onclick="deleteEntry(${realIdx})">Yes, remove</button>
+          <button class="rec-del confirm-no" onclick="cancelDelete(${realIdx})">Cancel</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function askDelete(i) {
+    // Hide any other open confirmations first
+    document.querySelectorAll('.confirm-row').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.rec-del').forEach(el => el.style.display = '');
+    const confirmRow = document.getElementById('confirm-' + i);
+    const delBtn = document.getElementById('del-' + i);
+    if (confirmRow) { confirmRow.style.display = 'flex'; }
+    if (delBtn) { delBtn.style.display = 'none'; }
+  }
+
+  function cancelDelete(i) {
+    const confirmRow = document.getElementById('confirm-' + i);
+    const delBtn = document.getElementById('del-' + i);
+    if (confirmRow) confirmRow.style.display = 'none';
+    if (delBtn) delBtn.style.display = '';
   }
 
   function deleteEntry(i) {
-    if (!confirm('Remove this entry?')) return;
-    entries.splice(i,1); saveEntries(); renderRecords(); toast('Entry removed');
+    entries.splice(i, 1);
+    saveEntries();
+    renderRecords();
+    toast('Entry removed');
   }
 
+  let clearPending = false;
   function clearAll() {
-    if (!entries.length) return;
-    if (!confirm('Clear ALL records? This cannot be undone.')) return;
-    entries=[]; saveEntries(); renderRecords(); toast('All records cleared');
+    if (!entries.length) { toast('No records to clear'); return; }
+    if (!clearPending) {
+      clearPending = true;
+      const btn = document.querySelector('.btn-clear');
+      btn.textContent = '⚠️ Tap again to confirm clear all';
+      btn.style.borderColor = 'var(--stop)';
+      btn.style.color = 'var(--stop)';
+      setTimeout(() => {
+        clearPending = false;
+        btn.textContent = '🗑 Clear All Records';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      }, 3000);
+      return;
+    }
+    clearPending = false;
+    entries = [];
+    saveEntries();
+    renderRecords();
+    toast('All records cleared');
+    const btn = document.querySelector('.btn-clear');
+    btn.textContent = '🗑 Clear All Records';
+    btn.style.borderColor = '';
+    btn.style.color = '';
   }
 
   // ── EXPORT ──
@@ -594,19 +705,88 @@
     toast('CSV saved — open in Files then Excel');
   }
 
-  // ── SETUP BANNER ──
-  function dismissBanner() {
-    document.getElementById('setupBanner').style.display = 'none';
-    save(BK, true);
+  // ── MANUAL ENTRY ──
+  function calcPreview() {
+    const dateVal = document.getElementById('mDate').value;
+    const startVal = document.getElementById('mStart').value;
+    const finishVal = document.getElementById('mFinish').value;
+    const breakMins = parseInt(document.getElementById('mBreak').value) || 0;
+    const preview = document.getElementById('calcPreview');
+    const saveBtn = document.getElementById('btnSaveManual');
+
+    if (!dateVal || !startVal || !finishVal) {
+      preview.classList.remove('visible');
+      saveBtn.disabled = true;
+      return;
+    }
+
+    const startMs = timeToMs(startVal);
+    const finishMs = timeToMs(finishVal);
+    const breakMs = breakMins * 60000;
+    const workingMs = finishMs - startMs - breakMs;
+
+    if (workingMs <= 0) {
+      preview.classList.remove('visible');
+      saveBtn.disabled = true;
+      return;
+    }
+
+    document.getElementById('pvStart').textContent = fmt12(startVal);
+    document.getElementById('pvFinish').textContent = fmt12(finishVal);
+    document.getElementById('pvBreak').textContent = breakMins + ' min' + (breakMins !== 1 ? 's' : '');
+    document.getElementById('pvWorking').textContent = msHHMM(workingMs);
+    document.getElementById('pvDecimal').textContent = msDecimal(workingMs);
+    preview.classList.add('visible');
+    saveBtn.disabled = false;
   }
 
-  if (!load(BK)) {
-    // Show banner only if NOT running as installed PWA
-    const isStandalone = window.navigator.standalone === true;
-    if (!isStandalone) document.getElementById('setupBanner').style.display = 'block';
+  function saveManual() {
+    const dateVal = document.getElementById('mDate').value;
+    const startVal = document.getElementById('mStart').value;
+    const finishVal = document.getElementById('mFinish').value;
+    const breakMins = parseInt(document.getElementById('mBreak').value) || 0;
+
+    const d = new Date(dateVal + 'T12:00:00');
+    const breakMs = breakMins * 60000;
+    const workingMs = timeToMs(finishVal) - timeToMs(startVal) - breakMs;
+
+    if (workingMs <= 0) { toast('Logout must be after login!'); return; }
+
+    entries.unshift({
+      date: dateVal,
+      day: DAYS[d.getDay()],
+      start: fmt12(startVal),
+      brk: msHHMM(breakMs),
+      brkMs: breakMs,
+      finish: fmt12(finishVal),
+      working: msHHMM(workingMs),
+      decimal: msDecimal(workingMs),
+      workingMs: workingMs
+    });
+    saveEntries();
+
+    // Reset form
+    document.getElementById('mStart').value = '';
+    document.getElementById('mFinish').value = '';
+    document.getElementById('mBreak').value = '0';
+    document.getElementById('calcPreview').classList.remove('visible');
+    document.getElementById('btnSaveManual').disabled = true;
+
+    toast('Entry saved ✓');
+    switchTab('records');
   }
 
-  // ── TOAST ──
+  function timeToMs(t) {
+    const [h, m] = t.split(':').map(Number);
+    return (h * 60 + m) * 60000;
+  }
+
+  function fmt12(t) {
+    const [h, m] = t.split(':').map(Number);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
+    return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+  }
   function toast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg; t.classList.add('show');
