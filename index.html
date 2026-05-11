@@ -25,6 +25,8 @@
     --brk-active-light: #fff3ec;
     --blue: #1a3d8b;
     --blue-light: #eef2fb;
+    --purple: #6b3a8b;
+    --purple-light: #f3eef8;
     --r: 14px;
     --mono: 'Courier New', monospace;
     --sans: -apple-system, 'SF Pro Display', sans-serif;
@@ -302,6 +304,242 @@
   }
   .btn-save-manual:active { transform:scale(0.97); opacity:0.88; }
   .btn-save-manual:disabled { opacity:0.3; }
+
+  /* ── SCHEDULE VIEW ── */
+  .view-switcher {
+    display:flex; gap:8px; margin-bottom:16px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; padding:4px;
+  }
+
+  .view-btn {
+    flex:1; border:none; background:transparent;
+    color:var(--muted); font-size:13px; font-weight:600;
+    padding:10px; border-radius:8px; cursor:pointer;
+    transition:all 0.2s; font-family:var(--sans);
+  }
+
+  .view-btn.active {
+    background:var(--purple); color:#fff;
+    box-shadow:0 2px 8px rgba(107,58,139,0.3);
+  }
+
+  .schedule-item {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--r); padding:14px 16px; margin-bottom:10px;
+    position:relative;
+  }
+
+  .sch-top {
+    display:flex; justify-content:space-between; align-items:flex-start;
+    margin-bottom:10px;
+  }
+
+  .sch-date-info {
+    flex:1;
+  }
+
+  .sch-date {
+    font-size:15px; font-weight:700; color:var(--ink);
+  }
+
+  .sch-day {
+    font-size:12px; color:var(--muted);
+  }
+
+  .sch-actions {
+    display:flex; gap:6px;
+  }
+
+  .sch-edit, .sch-del {
+    background:none; border:1px solid var(--border);
+    color:var(--muted); border-radius:8px;
+    padding:5px 10px; font-size:13px; cursor:pointer;
+    transition:all 0.15s;
+  }
+
+  .sch-edit:active { border-color:var(--purple); color:var(--purple); }
+  .sch-del:active { border-color:var(--stop); color:var(--stop); }
+
+  .sch-time {
+    background:var(--purple-light); color:var(--purple);
+    padding:8px 12px; border-radius:10px;
+    font-family:var(--mono); font-size:14px; font-weight:700;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+
+  .sch-duration {
+    font-size:11px; color:var(--muted);
+    font-family:var(--mono); margin-top:6px;
+  }
+
+  /* Calendar Grid */
+  .calendar-grid {
+    display:grid; grid-template-columns:repeat(7,1fr);
+    gap:6px; margin-bottom:16px;
+  }
+
+  .cal-header {
+    text-align:center; font-size:10px; font-weight:700;
+    color:var(--muted); padding:8px 0;
+    text-transform:uppercase; letter-spacing:1px;
+  }
+
+  .cal-day {
+    aspect-ratio:1; background:var(--surface);
+    border:1px solid var(--border); border-radius:8px;
+    display:flex; flex-direction:column; align-items:center;
+    justify-content:center; font-size:14px; font-weight:600;
+    color:var(--ink); cursor:pointer; position:relative;
+    transition:all 0.15s;
+  }
+
+  .cal-day.other-month {
+    opacity:0.3;
+  }
+
+  .cal-day.today {
+    border-color:var(--go); border-width:2px;
+  }
+
+  .cal-day.has-schedule::after {
+    content:''; position:absolute; bottom:4px;
+    width:5px; height:5px; border-radius:50%;
+    background:var(--purple);
+  }
+
+  .cal-day:active {
+    background:var(--purple-light);
+  }
+
+  .cal-month-nav {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:16px; padding:0 4px;
+  }
+
+  .cal-month-title {
+    font-size:18px; font-weight:700; color:var(--ink);
+  }
+
+  .cal-nav-btn {
+    background:var(--surface); border:1px solid var(--border);
+    color:var(--ink); border-radius:8px; padding:8px 12px;
+    font-size:18px; cursor:pointer; transition:all 0.15s;
+  }
+
+  .cal-nav-btn:active {
+    background:var(--surface2);
+  }
+
+  /* Week View */
+  .week-day {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--r); padding:12px 14px; margin-bottom:8px;
+  }
+
+  .week-day-header {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:10px;
+  }
+
+  .week-day-name {
+    font-size:15px; font-weight:700; color:var(--ink);
+  }
+
+  .week-day-date {
+    font-size:12px; color:var(--muted); font-family:var(--mono);
+  }
+
+  .week-schedule-slot {
+    background:var(--purple-light); color:var(--purple);
+    padding:8px 10px; border-radius:8px; margin-top:8px;
+    font-size:13px; font-weight:600;
+  }
+
+  .week-no-schedule {
+    color:var(--muted); font-size:13px; font-style:italic;
+  }
+
+  /* Day View */
+  .day-view-header {
+    background:var(--ink); border-radius:14px;
+    padding:16px; text-align:center; margin-bottom:16px;
+  }
+
+  .day-view-date {
+    font-size:12px; color:rgba(255,255,255,0.35);
+    text-transform:uppercase; letter-spacing:2px; margin-bottom:4px;
+  }
+
+  .day-view-title {
+    font-size:24px; font-weight:700; color:#fff;
+  }
+
+  .day-view-nav {
+    display:flex; gap:8px; margin-bottom:16px;
+  }
+
+  .day-nav-btn {
+    flex:1; background:var(--surface); border:1px solid var(--border);
+    color:var(--ink); border-radius:10px; padding:12px;
+    font-size:14px; font-weight:600; cursor:pointer;
+    transition:all 0.15s;
+  }
+
+  .day-nav-btn:active {
+    background:var(--surface2);
+  }
+
+  /* Add Schedule Form Modal */
+  .modal-overlay {
+    position:fixed; top:0; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,0.5); z-index:300;
+    display:none; align-items:flex-end; justify-content:center;
+  }
+
+  .modal-overlay.show {
+    display:flex;
+  }
+
+  .modal-content {
+    background:var(--bg); border-radius:20px 20px 0 0;
+    width:100%; max-height:80vh; overflow-y:auto;
+    padding:20px 16px calc(var(--safe-bot) + 20px);
+    animation:slideUp 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { transform:translateY(100%); }
+    to { transform:translateY(0); }
+  }
+
+  .modal-header {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:20px;
+  }
+
+  .modal-title {
+    font-size:22px; font-weight:700; color:var(--ink);
+  }
+
+  .modal-close {
+    background:var(--surface); border:1px solid var(--border);
+    color:var(--muted); border-radius:8px; padding:6px 12px;
+    font-size:14px; cursor:pointer;
+  }
+
+  .btn-add-schedule {
+    position:fixed; bottom:calc(var(--safe-bot) + 72px); right:20px;
+    width:56px; height:56px; border-radius:50%;
+    background:var(--purple); color:#fff; border:none;
+    font-size:28px; cursor:pointer;
+    box-shadow:0 4px 20px rgba(107,58,139,0.4);
+    z-index:90; transition:transform 0.15s;
+  }
+
+  .btn-add-schedule:active {
+    transform:scale(0.92);
+  }
 </style>
 </head>
 <body>
@@ -349,24 +587,64 @@
   </div>
 </div>
 
-<!-- ═══ TAB: RECORDS ═══ -->
-<div class="page" id="page-records">
+<!-- ═══ TAB: SCHEDULE ═══ -->
+<div class="page" id="page-schedule">
   <div class="page-header">
-    <h2>My <span>Records</span></h2>
-    <p>All saved shifts</p>
+    <h2>My <span>Schedule</span></h2>
+    <p>View your work schedule</p>
   </div>
 
-  <div class="summary-grid">
-    <div class="s-box"><div class="s-lbl">Days</div><div class="s-val" id="sumDays">0</div></div>
-    <div class="s-box"><div class="s-lbl">Total</div><div class="s-val" id="sumTotal">—</div></div>
-    <div class="s-box"><div class="s-lbl">Avg/Day</div><div class="s-val" id="sumAvg">—</div></div>
+  <div class="view-switcher">
+    <button class="view-btn active" id="view-day" onclick="switchScheduleView('day')">Day</button>
+    <button class="view-btn" id="view-week" onclick="switchScheduleView('week')">Week</button>
+    <button class="view-btn" id="view-month" onclick="switchScheduleView('month')">Month</button>
   </div>
 
-  <button class="btn-export" onclick="exportCSV()">⬇ Export CSV for Excel</button>
+  <!-- Day View -->
+  <div id="schedule-day-view" class="schedule-view">
+    <div class="day-view-header">
+      <div class="day-view-date" id="dayViewDate">—</div>
+      <div class="day-view-title" id="dayViewTitle">—</div>
+    </div>
+    <div class="day-view-nav">
+      <button class="day-nav-btn" onclick="changeDay(-1)">← Previous</button>
+      <button class="day-nav-btn" onclick="changeDay(0)">Today</button>
+      <button class="day-nav-btn" onclick="changeDay(1)">Next →</button>
+    </div>
+    <div id="dayScheduleList"></div>
+  </div>
 
-  <div id="recordsList"></div>
+  <!-- Week View -->
+  <div id="schedule-week-view" class="schedule-view" style="display:none;">
+    <div class="day-view-nav" style="margin-bottom:16px;">
+      <button class="day-nav-btn" onclick="changeWeek(-1)">← Previous Week</button>
+      <button class="day-nav-btn" onclick="changeWeek(0)">This Week</button>
+      <button class="day-nav-btn" onclick="changeWeek(1)">Next Week →</button>
+    </div>
+    <div id="weekScheduleList"></div>
+  </div>
 
-  <button class="btn-clear" onclick="clearAll()">🗑 Clear All Records</button>
+  <!-- Month View -->
+  <div id="schedule-month-view" class="schedule-view" style="display:none;">
+    <div class="cal-month-nav">
+      <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+      <div class="cal-month-title" id="monthTitle">—</div>
+      <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="calendar-grid">
+      <div class="cal-header">Sun</div>
+      <div class="cal-header">Mon</div>
+      <div class="cal-header">Tue</div>
+      <div class="cal-header">Wed</div>
+      <div class="cal-header">Thu</div>
+      <div class="cal-header">Fri</div>
+      <div class="cal-header">Sat</div>
+      <div id="calendarDays"></div>
+    </div>
+    <div id="monthScheduleList"></div>
+  </div>
+
+  <button class="btn-add-schedule" onclick="openScheduleModal()">+</button>
 </div>
 
 <!-- ═══ TAB: ADD MANUAL ═══ -->
@@ -414,10 +692,33 @@
   <button class="btn-save-manual" id="btnSaveManual" onclick="saveManual()" disabled>Save Entry</button>
 </div>
 
+<!-- ═══ TAB: RECORDS ═══ -->
+<div class="page" id="page-records">
+  <div class="page-header">
+    <h2>My <span>Records</span></h2>
+    <p>All saved shifts</p>
+  </div>
+
+  <div class="summary-grid">
+    <div class="s-box"><div class="s-lbl">Days</div><div class="s-val" id="sumDays">0</div></div>
+    <div class="s-box"><div class="s-lbl">Total</div><div class="s-val" id="sumTotal">—</div></div>
+    <div class="s-box"><div class="s-lbl">Avg/Day</div><div class="s-val" id="sumAvg">—</div></div>
+  </div>
+
+  <button class="btn-export" onclick="exportCSV()">⬇ Export CSV for Excel</button>
+
+  <div id="recordsList"></div>
+
+  <button class="btn-clear" onclick="clearAll()">🗑 Clear All Records</button>
+</div>
+
 <!-- ═══ TAB BAR ═══ -->
 <div class="tab-bar">
   <button class="tab active" id="tab-clock" onclick="switchTab('clock')">
     <span class="t-icon">⏱</span>Clock
+  </button>
+  <button class="tab" id="tab-schedule" onclick="switchTab('schedule')">
+    <span class="t-icon">📅</span>Schedule
   </button>
   <button class="tab" id="tab-add" onclick="switchTab('add')">
     <span class="t-icon">＋</span>Add
@@ -427,14 +728,49 @@
   </button>
 </div>
 
+<!-- ═══ SCHEDULE MODAL ═══ -->
+<div class="modal-overlay" id="scheduleModal" onclick="closeModalOnOverlay(event)">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Add Schedule</div>
+      <button class="modal-close" onclick="closeScheduleModal()">Cancel</button>
+    </div>
+    
+    <div class="card">
+      <div class="card-title">Schedule Details</div>
+      
+      <div class="form-group">
+        <div class="form-label">Date</div>
+        <input type="date" class="form-input" id="schDate">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">Start Time</div>
+          <input type="time" class="form-input" id="schStart">
+        </div>
+        <div class="form-group">
+          <div class="form-label">End Time</div>
+          <input type="time" class="form-input" id="schEnd">
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-save-manual" id="btnSaveSchedule" onclick="saveSchedule()">Save Schedule</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
   // ── CONSTANTS ──
   const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const SK = 'att_state_v4';
   const EK = 'att_entries_v4';
+  const SCH_K = 'att_schedule_v4';
 
   // ── STATE ──
   let state = load(SK) || {
@@ -442,12 +778,19 @@
     totalBreakMs:0, onBreak:false, running:false, finished:false
   };
   let entries = load(EK) || [];
+  let schedules = load(SCH_K) || [];
+  let currentView = 'day';
+  let currentDayView = new Date();
+  let currentWeekView = new Date();
+  let currentMonthView = new Date();
+  let editingScheduleId = null;
 
   // ── STORAGE ──
   function load(k) { try { return JSON.parse(localStorage.getItem(k)); } catch(e) { return null; } }
   function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {} }
   function saveState() { save(SK, state); }
   function saveEntries() { save(EK, entries); }
+  function saveSchedules() { save(SCH_K, schedules); }
 
   // ── TABS ──
   function switchTab(name) {
@@ -456,8 +799,8 @@
     document.getElementById('page-' + name).classList.add('active');
     document.getElementById('tab-' + name).classList.add('active');
     if (name === 'records') renderRecords();
+    if (name === 'schedule') renderScheduleView();
     if (name === 'add') {
-      // Pre-fill today's date if empty
       const d = document.getElementById('mDate');
       if (!d.value) {
         const now = new Date();
@@ -611,7 +954,6 @@
     document.getElementById('sumAvg').textContent = msHHMM(Math.round(totalMs/entries.length));
 
     list.innerHTML = entries.map((e,i) => {
-      // Display newest first but use actual index for deletion
       const realIdx = entries.length - 1 - i;
       const entry = entries[realIdx];
       return `
@@ -641,7 +983,6 @@
   }
 
   function askDelete(i) {
-    // Hide any other open confirmations first
     document.querySelectorAll('.confirm-row').forEach(el => el.style.display = 'none');
     document.querySelectorAll('.rec-del').forEach(el => el.style.display = '');
     const confirmRow = document.getElementById('confirm-' + i);
@@ -776,7 +1117,6 @@
     });
     saveEntries();
 
-    // Reset form
     document.getElementById('mStart').value = '';
     document.getElementById('mFinish').value = '';
     document.getElementById('mBreak').value = '0';
@@ -787,6 +1127,298 @@
     switchTab('records');
   }
 
+  // ── SCHEDULE FUNCTIONS ──
+  function switchScheduleView(view) {
+    currentView = view;
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('view-' + view).classList.add('active');
+    document.getElementById('schedule-day-view').style.display = view === 'day' ? 'block' : 'none';
+    document.getElementById('schedule-week-view').style.display = view === 'week' ? 'block' : 'none';
+    document.getElementById('schedule-month-view').style.display = view === 'month' ? 'block' : 'none';
+    renderScheduleView();
+  }
+
+  function renderScheduleView() {
+    if (currentView === 'day') renderDayView();
+    else if (currentView === 'week') renderWeekView();
+    else if (currentView === 'month') renderMonthView();
+  }
+
+  function renderDayView() {
+    const d = currentDayView;
+    document.getElementById('dayViewDate').textContent = DAYS[d.getDay()].toUpperCase();
+    document.getElementById('dayViewTitle').textContent = `${d.getDate()} ${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}`;
+    
+    const dateStr = d.toISOString().split('T')[0];
+    const daySchedules = schedules.filter(s => s.date === dateStr);
+    
+    const list = document.getElementById('dayScheduleList');
+    if (daySchedules.length === 0) {
+      list.innerHTML = '<div class="empty"><div class="e-icon">📅</div>No schedule for this day</div>';
+      return;
+    }
+
+    list.innerHTML = daySchedules.map(s => {
+      const duration = calculateDuration(s.start, s.end);
+      return `
+        <div class="schedule-item">
+          <div class="sch-top">
+            <div class="sch-date-info">
+              <div class="sch-date">${s.date}</div>
+              <div class="sch-day">${s.day}</div>
+            </div>
+            <div class="sch-actions">
+              <button class="sch-edit" onclick="editSchedule('${s.id}')">Edit</button>
+              <button class="sch-del" onclick="deleteSchedule('${s.id}')">Remove</button>
+            </div>
+          </div>
+          <div class="sch-time">${s.start} → ${s.end}</div>
+          <div class="sch-duration">Duration: ${duration}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderWeekView() {
+    const startOfWeek = new Date(currentWeekView);
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+    
+    const list = document.getElementById('weekScheduleList');
+    let html = '';
+
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(startOfWeek);
+      day.setDate(startOfWeek.getDate() + i);
+      const dateStr = day.toISOString().split('T')[0];
+      const daySchedules = schedules.filter(s => s.date === dateStr);
+      
+      html += `
+        <div class="week-day">
+          <div class="week-day-header">
+            <div class="week-day-name">${DAYS[day.getDay()]}</div>
+            <div class="week-day-date">${day.getDate()} ${MONTHS[day.getMonth()]}</div>
+          </div>
+      `;
+
+      if (daySchedules.length > 0) {
+        daySchedules.forEach(s => {
+          html += `<div class="week-schedule-slot">${s.start} - ${s.end}</div>`;
+        });
+      } else {
+        html += `<div class="week-no-schedule">No schedule</div>`;
+      }
+
+      html += `</div>`;
+    }
+
+    list.innerHTML = html;
+  }
+
+  function renderMonthView() {
+    const year = currentMonthView.getFullYear();
+    const month = currentMonthView.getMonth();
+    
+    document.getElementById('monthTitle').textContent = `${MONTHS_FULL[month]} ${year}`;
+    
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const prevLastDay = new Date(year, month, 0);
+    
+    const firstDayOfWeek = firstDay.getDay();
+    const daysInMonth = lastDay.getDate();
+    const daysInPrevMonth = prevLastDay.getDate();
+    
+    const calendarDays = document.getElementById('calendarDays');
+    let html = '';
+
+    // Previous month days
+    for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+      const day = daysInPrevMonth - i;
+      html += `<div class="cal-day other-month">${day}</div>`;
+    }
+
+    // Current month days
+    const today = new Date();
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const dateStr = date.toISOString().split('T')[0];
+      const hasSchedule = schedules.some(s => s.date === dateStr);
+      const isToday = dateStr === today.toISOString().split('T')[0];
+      
+      let classes = 'cal-day';
+      if (isToday) classes += ' today';
+      if (hasSchedule) classes += ' has-schedule';
+      
+      html += `<div class="${classes}" onclick="viewDayFromMonth('${dateStr}')">${day}</div>`;
+    }
+
+    // Next month days
+    const totalCells = firstDayOfWeek + daysInMonth;
+    const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+    for (let day = 1; day <= remainingCells; day++) {
+      html += `<div class="cal-day other-month">${day}</div>`;
+    }
+
+    calendarDays.innerHTML = html;
+
+    // Show schedules for selected date or today
+    const selectedDate = currentMonthView.toISOString().split('T')[0];
+    const monthSchedules = schedules.filter(s => s.date.startsWith(`${year}-${String(month+1).padStart(2,'0')}`));
+    
+    const list = document.getElementById('monthScheduleList');
+    if (monthSchedules.length === 0) {
+      list.innerHTML = '<div class="empty" style="margin-top:16px;"><div class="e-icon">📅</div>No schedules this month</div>';
+    } else {
+      list.innerHTML = `<div style="margin-top:16px;"><div class="card-title">This Month's Schedule</div></div>` +
+        monthSchedules.map(s => {
+          const d = new Date(s.date + 'T12:00:00');
+          return `
+            <div class="schedule-item">
+              <div class="sch-top">
+                <div class="sch-date-info">
+                  <div class="sch-date">${s.date}</div>
+                  <div class="sch-day">${DAYS[d.getDay()]}</div>
+                </div>
+                <div class="sch-actions">
+                  <button class="sch-edit" onclick="editSchedule('${s.id}')">Edit</button>
+                  <button class="sch-del" onclick="deleteSchedule('${s.id}')">Remove</button>
+                </div>
+              </div>
+              <div class="sch-time">${s.start} → ${s.end}</div>
+            </div>
+          `;
+        }).join('');
+    }
+  }
+
+  function viewDayFromMonth(dateStr) {
+    currentDayView = new Date(dateStr + 'T12:00:00');
+    switchScheduleView('day');
+  }
+
+  function changeDay(offset) {
+    if (offset === 0) {
+      currentDayView = new Date();
+    } else {
+      currentDayView.setDate(currentDayView.getDate() + offset);
+    }
+    renderDayView();
+  }
+
+  function changeWeek(offset) {
+    if (offset === 0) {
+      currentWeekView = new Date();
+    } else {
+      currentWeekView.setDate(currentWeekView.getDate() + (offset * 7));
+    }
+    renderWeekView();
+  }
+
+  function changeMonth(offset) {
+    currentMonthView.setMonth(currentMonthView.getMonth() + offset);
+    renderMonthView();
+  }
+
+  function openScheduleModal(id = null) {
+    editingScheduleId = id;
+    const modal = document.getElementById('scheduleModal');
+    const title = document.getElementById('modalTitle');
+    
+    if (id) {
+      title.textContent = 'Edit Schedule';
+      const schedule = schedules.find(s => s.id === id);
+      if (schedule) {
+        document.getElementById('schDate').value = schedule.date;
+        document.getElementById('schStart').value = schedule.start;
+        document.getElementById('schEnd').value = schedule.end;
+      }
+    } else {
+      title.textContent = 'Add Schedule';
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('schDate').value = today;
+      document.getElementById('schStart').value = '';
+      document.getElementById('schEnd').value = '';
+    }
+    
+    modal.classList.add('show');
+  }
+
+  function closeScheduleModal() {
+    document.getElementById('scheduleModal').classList.remove('show');
+    editingScheduleId = null;
+  }
+
+  function closeModalOnOverlay(e) {
+    if (e.target.id === 'scheduleModal') {
+      closeScheduleModal();
+    }
+  }
+
+  function saveSchedule() {
+    const date = document.getElementById('schDate').value;
+    const start = document.getElementById('schStart').value;
+    const end = document.getElementById('schEnd').value;
+
+    if (!date || !start || !end) {
+      toast('Please fill all fields');
+      return;
+    }
+
+    const d = new Date(date + 'T12:00:00');
+
+    if (editingScheduleId) {
+      const idx = schedules.findIndex(s => s.id === editingScheduleId);
+      if (idx !== -1) {
+        schedules[idx] = {
+          id: editingScheduleId,
+          date: date,
+          day: DAYS[d.getDay()],
+          start: start,
+          end: end
+        };
+        toast('Schedule updated ✓');
+      }
+    } else {
+      const newSchedule = {
+        id: Date.now().toString(),
+        date: date,
+        day: DAYS[d.getDay()],
+        start: start,
+        end: end
+      };
+      schedules.push(newSchedule);
+      toast('Schedule added ✓');
+    }
+
+    schedules.sort((a, b) => {
+      if (a.date !== b.date) return a.date.localeCompare(b.date);
+      return a.start.localeCompare(b.start);
+    });
+
+    saveSchedules();
+    closeScheduleModal();
+    renderScheduleView();
+  }
+
+  function editSchedule(id) {
+    openScheduleModal(id);
+  }
+
+  function deleteSchedule(id) {
+    schedules = schedules.filter(s => s.id !== id);
+    saveSchedules();
+    renderScheduleView();
+    toast('Schedule removed');
+  }
+
+  function calculateDuration(start, end) {
+    const startMs = timeToMs(start);
+    const endMs = timeToMs(end);
+    const diff = endMs - startMs;
+    return msHHMM(diff);
+  }
+
+  // ── HELPERS ──
   function timeToMs(t) {
     const [h, m] = t.split(':').map(Number);
     return (h * 60 + m) * 60000;
@@ -798,12 +1430,13 @@
     setTimeout(() => t.classList.remove('show'), 2600);
   }
 
-  // ── HELPERS ──
   function msHHMM(ms) {
     const m = Math.floor(Math.max(0,ms)/60000);
     return `${Math.floor(m/60)}h ${String(m%60).padStart(2,'0')}m`;
   }
+  
   function msDecimal(ms) { return (Math.max(0,ms)/3600000).toFixed(2); }
+  
   function fmt(d) { return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
 
   // ── RESTORE STATE ON LOAD ──
